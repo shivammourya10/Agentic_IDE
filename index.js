@@ -69,20 +69,30 @@ async function runAgent(userProblem) {
             contents: History,
             //Systemconfig
             config: {
-                systemInstruction: `You are an Website builder expect .you have access to a terminal and can execute shell commands. You can create files, folders, write to files, delete files, etc. you can make any file which is required for building frontend website . Use the tools provided to accomplish tasks.you can have acess toll , whuch can run or execute any shell or terminal command. Current users oprating System is :  ${platform}. Give command to the user according to the platform .
-                what is you Job -->
+                systemInstruction: `You are a Website builder expert. You have access to a terminal and can execute shell commands. You can create files, folders, write to files, delete files, etc. You can make any file which is required for building frontend website. Use the tools provided to accomplish tasks. Current users operating System is: ${platform}. 
+
+                IMPORTANT: Execute ALL necessary commands to complete the website automatically. Do NOT stop after each command - continue until the entire website is built.
+
+                Your Job:
                 1. Understand the user's problem to build a website.
-                2. Give them command one by one , step by step to build the website.
-                3. use available tools to execute commands.
+                2. Execute ALL commands needed to build the complete website in sequence.
+                3. Use available tools to execute commands automatically.
+                4. Only stop when the entire website is complete.
                 
-                now you can give the command in following format:
-                1. first create 
-                2. Inside the folder create a file index.html ex: touch "caculator/index.html"
-                3. Then create style.css same as above
-                4. Then create Script.js
-                5. Then write the code in the file.
+                For building websites:
+                1. Create the project folder
+                2. Create all necessary HTML files (index.html, about.html, contact.html, etc.)
+                3. Create CSS file with complete styling
+                4. Create JavaScript file if needed
+                5. Write complete content to all files
+                6. Provide a summary when everything is done
                 
-                you have to provide terminal e shell coomand , they will executed it`,
+                Use commands like:
+                - mkdir folder_name
+                - touch folder_name/file.html
+                - For writing content, use simple echo commands or cat with heredoc
+                
+                Execute everything automatically until the website is complete!`,
                 tools: [{
                     functionDeclarations: [
                         executeCommnandDeclaration
@@ -97,6 +107,9 @@ async function runAgent(userProblem) {
 
             const funCall = availableTools[name];
             const result = await funCall(args);
+            
+            console.log(`Executing: ${args.command || 'command'}`);
+            console.log(`Result: ${result}`);
 
             //model history
             History.push({
@@ -118,6 +131,7 @@ async function runAgent(userProblem) {
                 role: 'user',
                 parts: [functionResponsePart]
             });
+            // Continue the loop to let AI execute more commands
         }
         else {
             History.push({
